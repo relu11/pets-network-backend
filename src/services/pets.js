@@ -1,4 +1,41 @@
-import { getDocs, insertDoc, getDocWithId, deleteDoc } from "./Database";
+import {
+  getDocs,
+  insertDoc,
+  getDocWithId,
+  deleteDoc,
+  getAll,
+} from "./Database";
+import { getUserPets } from "./users";
+
+const isMatch = (petA, petB) =>
+  petA.lookingForMatch &&
+  petA.ownerId !== petB.ownerId &&
+  petA.type === petB.type &&
+  petA.city === petB.city &&
+  Math.abs(petA.ageMonths - petB.ageMonths) <= 3;
+
+export const getALlPets = async (userId) => {
+  const allPets = await getAll("pets");
+  if (userId) {
+    const userPets = await getUserPets(userId);
+    allPets.forEach((p) => {
+      userPets.forEach((up) => {
+        if (isMatch(p, up)) {
+          allPets[allPets.indexOf(p)].isMatch = true;
+          allPets[allPets.indexOf(p)].matchWith = up;
+        }
+      });
+    });
+  }
+  return allPets;
+};
+
+export const findPetMatches = async (petId) => {
+  const targetPet = await getDocWithId("pets", petId);
+  let pets = await getAll("pets");
+  pets = pets.filter((p) => isMatch(p, targetPet));
+  return pets;
+};
 
 export const nearbyServices = async (userCity) => {
   const nearbyService = await getDocs("pets_services", { city: userCity });
@@ -21,13 +58,13 @@ export const editServices = async (userId, serviceId, newServicesData) => {
 };
 export const deleteService = async (userId, serviceId) => {
   const serviceDoc = await getDocWithId("pets_services", serviceId);
-  --Todo;
+  // Todo;
   // if (serviceDoc.ownerId !== userId) {
   //   throw new Error("unauthorized");
   // }
   const result = await deleteDoc("pets_services", serviceId);
   return result;
-}
+};
 
 export const getAdoptionPets = async () => {
   const pets = await getAll("adoption_pets");

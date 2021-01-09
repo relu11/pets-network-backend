@@ -111,3 +111,34 @@ export const authVaildator = (req, res, next) => {
   }
   return res.status(403).send({ success: false, message: "forbidden" });
 };
+
+export const optionalAuth = (req, res, next) => {
+  if (req.headers.authorization) {
+    const token = req.headers.authorization.split(" ")[1];
+    if (token) {
+      jwt.verify(token, TOKEN_SECRET, (err) => {
+        if (err) {
+          console.log(err);
+          res.status(403).send({ success: false, message: "forbidden" });
+        }
+        getUserFromToken(token)
+          .then((user) => {
+            req.user = user;
+            next();
+          })
+          .catch((error) => {
+            console.log(error.message);
+            if (error.error === "not-found") {
+              res
+                .status(404)
+                .send({ success: false, message: "invalid token" });
+            } else {
+              res.status(403).send({ success: false, message: "forbidden" });
+            }
+          });
+      });
+    }
+  } else {
+    next();
+  }
+};

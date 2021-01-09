@@ -1,7 +1,6 @@
 import Cloudant from "@cloudant/cloudant";
 import dotenv from "dotenv";
-
-const vcap = require("../config/vcap-local.json");
+import { vcap } from "../config/config";
 
 dotenv.config();
 

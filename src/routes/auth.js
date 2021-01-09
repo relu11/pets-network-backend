@@ -1,15 +1,8 @@
 import { Router } from "express";
 import fetch from "node-fetch";
-import { IAM_API } from "../../config";
 import { createUser, login, authVaildator } from "../services/auth";
 
 const router = Router();
-
-router.get("/", async (req, res) => {
-  const serviceRes = await fetch(`${IAM_API}/`);
-  const txt = await serviceRes.text();
-  res.send(txt);
-});
 
 router.post("/signup", async (req, res) => {
   const body = req.body;

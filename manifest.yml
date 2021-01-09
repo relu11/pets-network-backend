@@ -1,0 +1,14 @@
+applications:
+- buildpack: sdk-for-nodejs
+  command: npm start
+  domain: null
+  env:
+    OPTIMIZE_MEMORY: true
+  host: null
+  instances: 1
+  memory: 128M
+  name: petsnetworkbackendtest
+  random-route: true
+  routes:
+  - route: pets-network-backend-test.eu-gb.cf.appdomain.cloud
+  timeout: 180
